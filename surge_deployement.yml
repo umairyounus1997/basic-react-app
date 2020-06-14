@@ -1,0 +1,38 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: React App Deploy to Surge
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2-beta
+      with: 
+        version: 12
+    - name: Github Action for Yarn
+      uses: Borales/actions-yarn@v2.1.0
+      with:
+        # yarn install command
+        cmd: install # npn install/ yarn install
+
+    - name: build yarn on  # it build the yarn on github repo 
+      run: yarn build
+            
+    - name: Install Surge
+      run: npm install -g surge
+             
+    - name: Deploy to Surge
+      run: surge ./build http://umairproject28.surge.sh --token ${{secrets.SURGE_TOKEN}}
